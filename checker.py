@@ -1,6 +1,6 @@
 import requests
 
-URL = "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console"
+URL = "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb"
 
 response = requests.get(
     URL,
@@ -13,6 +13,8 @@ response = requests.get(
 print("HTTP status:", response.status_code)
 
 page = response.text.lower()
+
+print("Page length:", len(page))
 
 if "add to cart" in page:
     print("🚨 POSSIBLE PS5 PRO RESTOCK! 🚨")
