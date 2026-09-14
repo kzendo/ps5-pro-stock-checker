@@ -1,16 +1,16 @@
 name: PS5 Pro Stock Checker
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 jobs:
   check-stock:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,10 +20,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright requests
+          pip install -r requirements.txt
           playwright install --with-deps chromium
 
-      - name: Check Sony
+      - name: Run stock checker
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python checker.py
