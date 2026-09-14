@@ -39,18 +39,9 @@ with sync_playwright() as p:
         response.status if response else "No response"
     )
 
-    # Give Sony's JavaScript time to finish rendering
     page.wait_for_timeout(5000)
 
-    # --------------------------------------------------
-    # GET PAGE TEXT
-    # --------------------------------------------------
-
     text = page.locator("body").inner_text().lower()
-
-    # --------------------------------------------------
-    # KNOWN UNAVAILABLE STATES
-    # --------------------------------------------------
 
     unavailable_states = [
         "currently unavailable",
@@ -58,10 +49,6 @@ with sync_playwright() as p:
         "sold out",
         "not available"
     ]
-
-    # --------------------------------------------------
-    # KNOWN AVAILABLE / PURCHASABLE STATES
-    # --------------------------------------------------
 
     available_states = [
         "low stock",
@@ -83,10 +70,6 @@ with sync_playwright() as p:
         if state in text
     ]
 
-    # --------------------------------------------------
-    # DETERMINE STATUS
-    # --------------------------------------------------
-
     if unavailable_found:
         print("❌ PS5 Pro is currently unavailable.")
         print("Detected:", ", ".join(unavailable_found))
@@ -105,9 +88,6 @@ with sync_playwright() as p:
         print("✅ Discord notification sent!")
 
     else:
-        # Something changed, but we don't know what it means.
-        # Alerting here gives us a safety net rather than silently
-        # missing a Sony page redesign.
         print("⚠️ UNKNOWN STOCK STATUS")
         print("No known availability state was detected.")
 
