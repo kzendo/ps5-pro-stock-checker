@@ -18,8 +18,10 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install requests
-        run: pip install requests
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
 
       - name: Check Sony
         run: python checker.py
