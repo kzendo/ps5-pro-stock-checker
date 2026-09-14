@@ -15,22 +15,22 @@ with sync_playwright() as p:
 
     print("Opening Sony page...")
 
-    response = page.goto(URL, wait_until="domcontentloaded", timeout=60000)
+    response = page.goto(
+        URL,
+        wait_until="domcontentloaded",
+        timeout=60000
+    )
 
     print("HTTP status:", response.status if response else "No response")
 
     page.wait_for_timeout(5000)
 
-    print("Final URL:", page.url)
-    print("Page title:", page.title())
+    print("\n--- SONY PAGE TEXT ---\n")
 
-    text = page.locator("body").inner_text().lower()
+    text = page.locator("body").inner_text()
 
-    print("Page text length:", len(text))
+    print(text)
 
-    if "add to cart" in text:
-        print("🚨 POSSIBLE PS5 PRO RESTOCK! 🚨")
-    else:
-        print("PS5 Pro does not appear to be available.")
+    print("\n--- END SONY PAGE TEXT ---")
 
     browser.close()
