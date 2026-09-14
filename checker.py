@@ -1,5 +1,4 @@
 import os
-import requests
 from playwright.sync_api import sync_playwright
 
 URL = "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb"
@@ -30,51 +29,48 @@ with sync_playwright() as p:
 
     page.wait_for_timeout(5000)
 
-    print("\n========== VISIBLE BUTTONS ==========\n")
+    print("\n========== AVAILABILITY-RELATED ELEMENTS ==========\n")
 
-    buttons = page.locator("button")
+    elements = page.locator(
+        "text=/available|unavailable|stock|cart|purchase|buy/i"
+    )
 
-    for i in range(buttons.count()):
-        button = buttons.nth(i)
+    for i in range(elements.count()):
+        element = elements.nth(i)
 
         try:
-            if not button.is_visible():
+            if not element.is_visible():
                 continue
 
-            text = button.inner_text().strip()
-            disabled = button.is_disabled()
+            text = element.inner_text().strip()
 
-            print(
-                f"BUTTON {i}: "
-                f"text='{text}' | "
-                f"disabled={disabled}"
-            )
+            if not text:
+                continue
+
+            tag = element.evaluate("(el) => el.tagName")
+            classes = element.get_attribute("class")
+            aria = element.get_attribute("aria-label")
+            disabled = element.get_attribute("disabled")
+            aria_disabled = element.get_attribute("aria-disabled")
+
+            print("--------------------------------------------------")
+            print(f"TAG:           {tag}")
+            print(f"TEXT:          {text[:500]}")
+            print(f"CLASS:         {classes}")
+            print(f"ARIA-LABEL:    {aria}")
+            print(f"DISABLED:      {disabled}")
+            print(f"ARIA-DISABLED: {aria_disabled}")
 
         except Exception:
             pass
 
-    print("\n========== VISIBLE LINKS ==========\n")
+    print("\n========== PRODUCT AREA TEXT ==========\n")
 
-    links = page.locator("a")
+    body_text = page.locator("body").inner_text()
 
-    for i in range(links.count()):
-        link = links.nth(i)
-
-        try:
-            if not link.is_visible():
-                continue
-
-            text = link.inner_text().strip()
-            href = link.get_attribute("href")
-
-            print(
-                f"LINK {i}: "
-                f"text='{text}' | "
-                f"href='{href}'"
-            )
-
-        except Exception:
-            pass
+    # Print the first part of the page text so we can see
+    # how Sony is presenting the product.
+    print(body_text[:10000])
 
     print("\n========== END DIAGNOSTIC ==========\n")
 
