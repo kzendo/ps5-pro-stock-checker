@@ -3,17 +3,6 @@ import requests
 from playwright.sync_api import sync_playwright
 
 URL = "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb"
-WEBHOOK_URL = os.environ["DISCORD_WEBHOOK_URL"]
-
-
-def send_discord(message):
-    response = requests.post(
-        WEBHOOK_URL,
-        json={"content": message},
-        timeout=30
-    )
-    response.raise_for_status()
-
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
@@ -41,24 +30,52 @@ with sync_playwright() as p:
 
     page.wait_for_timeout(5000)
 
-    text = page.locator("body").inner_text().lower()
+    print("\n========== VISIBLE BUTTONS ==========\n")
 
-    if "currently unavailable" in text:
-        print("❌ PS5 Pro is currently unavailable.")
+    buttons = page.locator("button")
 
-    elif "add to cart" in text:
-        print("🚨🚨 PS5 PRO MAY BE IN STOCK! 🚨🚨")
+    for i in range(buttons.count()):
+        button = buttons.nth(i)
 
-        send_discord(
-            "🚨🚨 **PS5 PRO MAY BE IN STOCK!** 🚨🚨\n\n"
-            "Sony PlayStation Direct appears to have the PS5 Pro available!\n\n"
-            f"BUY NOW: {URL}"
-        )
+        try:
+            if not button.is_visible():
+                continue
 
-        print("✅ Discord notification sent!")
+            text = button.inner_text().strip()
+            disabled = button.is_disabled()
 
-    else:
-        print("⚠️ UNKNOWN STOCK STATUS")
+            print(
+                f"BUTTON {i}: "
+                f"text='{text}' | "
+                f"disabled={disabled}"
+            )
+
+        except Exception:
+            pass
+
+    print("\n========== VISIBLE LINKS ==========\n")
+
+    links = page.locator("a")
+
+    for i in range(links.count()):
+        link = links.nth(i)
+
+        try:
+            if not link.is_visible():
+                continue
+
+            text = link.inner_text().strip()
+            href = link.get_attribute("href")
+
+            print(
+                f"LINK {i}: "
+                f"text='{text}' | "
+                f"href='{href}'"
+            )
+
+        except Exception:
+            pass
+
+    print("\n========== END DIAGNOSTIC ==========\n")
 
     browser.close()
-
