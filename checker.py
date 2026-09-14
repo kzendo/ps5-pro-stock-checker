@@ -25,12 +25,17 @@ with sync_playwright() as p:
 
     page.wait_for_timeout(5000)
 
-    print("\n--- SONY PAGE TEXT ---\n")
+    text = page.locator("body").inner_text().lower()
 
-    text = page.locator("body").inner_text()
+    if "currently unavailable" in text:
+        print("❌ PS5 Pro is currently unavailable.")
 
-    print(text)
+    elif "add to cart" in text:
+        print("🚨🚨 PS5 PRO MAY BE IN STOCK! 🚨🚨")
+        print("ADD TO CART was found!")
 
-    print("\n--- END SONY PAGE TEXT ---")
+    else:
+        print("⚠️ UNKNOWN STOCK STATUS")
+        print("Sony changed something or the page could not be interpreted.")
 
     browser.close()
