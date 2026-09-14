@@ -12,7 +12,6 @@ def send_discord(message):
         json={"content": message},
         timeout=30
     )
-
     response.raise_for_status()
 
 
@@ -45,7 +44,7 @@ with sync_playwright() as p:
         print("❌ PS5 Pro is currently unavailable.")
 
     elif "add to cart" in text:
-        print("🚨 PS5 PRO MAY BE IN STOCK! 🚨")
+        print("🚨🚨 PS5 PRO MAY BE IN STOCK! 🚨🚨")
 
         send_discord(
             "🚨🚨 **PS5 PRO MAY BE IN STOCK!** 🚨🚨\n\n"
@@ -53,7 +52,7 @@ with sync_playwright() as p:
             f"BUY NOW: {URL}"
         )
 
-        print("Discord notification sent!")
+        print("✅ Discord notification sent!")
 
     else:
         print("⚠️ UNKNOWN STOCK STATUS")
